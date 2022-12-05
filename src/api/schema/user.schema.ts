@@ -1,6 +1,6 @@
 import { boolean, object, string, TypeOf } from 'zod';
 
-export const createUserSchema = object({
+const payload = {
   body: object({
     name: string({
       required_error: 'Name is required',
@@ -15,7 +15,15 @@ export const createUserSchema = object({
       required_error: 'Email is required',
     }).email('Not a valid email'),
   }),
+};
+
+export const createUserSchema = object({
+  ...payload,
+});
+
+export const updateUserSchema = object({
+  ...payload,
 });
 
 export type CreateUserInput = TypeOf<typeof createUserSchema>;
-export type EditUserInput = TypeOf<typeof createUserSchema>;
+export type EditUserInput = TypeOf<typeof updateUserSchema>;
