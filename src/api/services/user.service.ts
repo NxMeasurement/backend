@@ -35,7 +35,8 @@ export async function validatePassword({
 }
 
 export async function getUser(query: FilterQuery<IUserDocument>) {
-  return UserModel.findOne(query).lean();
+  const user = UserModel.findOne(query).lean();
+  return user;
 }
 
 export async function findAndUpdateUser(

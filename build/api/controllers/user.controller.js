@@ -65,7 +65,14 @@ function getUserController(req, res) {
         if (!user) {
             return res.sendStatus(404);
         }
-        return res.send(user);
+        const userToResponse = {
+            name: user.name,
+            lastName: user.lastName,
+            email: user.email,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
+        return res.send(userToResponse);
     });
 }
 exports.getUserController = getUserController;

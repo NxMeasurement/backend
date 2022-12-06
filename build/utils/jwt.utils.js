@@ -33,7 +33,6 @@ function verifyJwt(token, keyName) {
         };
     }
     catch (e) {
-        console.error(e);
         return {
             valid: false,
             expired: e.message === 'jwt expired',

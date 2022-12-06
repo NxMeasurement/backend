@@ -78,7 +78,15 @@ export async function getUserController(req: Request, res: Response) {
     return res.sendStatus(404);
   }
 
-  return res.send(user);
+  const userToResponse = {
+    name: user.name,
+    lastName: user.lastName,
+    email: user.email,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+
+  return res.send(userToResponse);
 }
 
 export async function updateUserController(

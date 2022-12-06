@@ -42,7 +42,8 @@ function validatePassword({ email, password, }) {
 exports.validatePassword = validatePassword;
 function getUser(query) {
     return __awaiter(this, void 0, void 0, function* () {
-        return user_model_1.default.findOne(query).lean();
+        const user = user_model_1.default.findOne(query).lean();
+        return user;
     });
 }
 exports.getUser = getUser;
