@@ -10,8 +10,9 @@ const user_controller_1 = require("../../controllers/user.controller");
 const user_schema_1 = require("../../schema/user.schema");
 //middleware
 const schema_middleware_1 = __importDefault(require("../../middleware/schema.middleware"));
+const requireUser_1 = __importDefault(require("../../middleware/requireUser"));
 const router = express_1.default.Router();
-router.get('/', user_controller_1.getUserController);
-router.put('/', [(0, schema_middleware_1.default)(user_schema_1.updateUserSchema)], user_controller_1.updateUserController);
+router.get('/', requireUser_1.default, user_controller_1.getUserController);
+router.put('/', [requireUser_1.default, (0, schema_middleware_1.default)(user_schema_1.updateUserSchema)], user_controller_1.updateUserController);
 router.post('/', [(0, schema_middleware_1.default)(user_schema_1.createUserSchema)], user_controller_1.createUserController);
 exports.default = router;

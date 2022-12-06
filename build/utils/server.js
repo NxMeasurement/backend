@@ -7,8 +7,11 @@ const routes_1 = __importDefault(require("../api/routes"));
 const response_time_1 = __importDefault(require("response-time"));
 const express_1 = __importDefault(require("express"));
 const metrics_1 = require("./metrics");
+const deserializeUser_1 = __importDefault(require("../api/middleware/deserializeUser"));
 const createServer = () => {
     const app = (0, express_1.default)();
+    app.use(express_1.default.json());
+    app.use(deserializeUser_1.default);
     (0, routes_1.default)(app);
     app.use((0, response_time_1.default)((req, res, time) => {
         var _a;

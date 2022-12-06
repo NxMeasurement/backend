@@ -2,9 +2,14 @@ import routes from '../api/routes';
 import responseTime from 'response-time';
 import express, { Request, Response } from 'express';
 import { restResponseTimeHistogram, startMetricsServer } from './metrics';
+import deserializeUser from '../api/middleware/deserializeUser';
 
 const createServer = () => {
   const app = express();
+
+  app.use(express.json());
+  app.use(deserializeUser);
+
   routes(app);
 
   app.use(

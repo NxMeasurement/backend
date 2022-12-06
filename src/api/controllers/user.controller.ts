@@ -8,6 +8,12 @@ import {
   validateEmail,
 } from '../services/user.service';
 import logger from '../../utils/logger';
+import { createSession } from '../services/session.service';
+import { signJwt } from '../../utils/jwt.utils';
+import {
+  accessTokenCookieOptions,
+  refreshTokenCookieOptions,
+} from '../../utils/cookieOptions';
 
 export async function createUserController(
   req: Request<{}, {}, CreateUserInput['body']>,
@@ -30,7 +36,34 @@ export async function createUserController(
         .json({ msg: 'A server error occurred during registration' });
     }
 
-    return res.send({ user });
+    // create a session
+    const session = await createSession(user._id, req.get('user-agent') || '');
+
+    if (!session) {
+      return res.status(200).json({
+        msg: 'User created but an error occurred while creating the session',
+        user,
+      });
+    }
+
+    // create an access token
+    const accessToken = signJwt(
+      { ...user, session: session._id },
+      'accessTokenPrivateKey',
+      { expiresIn: '15m' } // 15 minutes,
+    );
+
+    // create a refresh token
+    const refreshToken = signJwt(
+      { ...user, session: session._id },
+      'refreshTokenPrivateKey',
+      { expiresIn: '1y' }
+    );
+
+    res.cookie('accessToken', accessToken, accessTokenCookieOptions);
+    res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
+
+    return res.send({ user, accessToken, refreshToken });
   } catch (e: any) {
     logger.error(e);
     return res.status(409).send(e.message);

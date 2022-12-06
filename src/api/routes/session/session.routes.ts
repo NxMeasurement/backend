@@ -12,6 +12,7 @@ import { createSessionSchema } from '../../schema/session.schema';
 
 //middleware
 import validateSchema from '../../middleware/schema.middleware';
+import requireUser from '../../middleware/requireUser';
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.post(
   createUserSessionController
 );
 
-router.get('/', getUserSessionsController);
-router.delete('/', deleteUserSessionController);
+router.get('/', requireUser, getUserSessionsController);
+router.delete('/', requireUser, deleteUserSessionController);
 
 export default router;
