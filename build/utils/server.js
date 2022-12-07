@@ -23,7 +23,6 @@ const createServer = () => {
             }, time * 1000);
         }
     }));
-    (0, metrics_1.startMetricsServer)();
     return app;
 };
 exports.default = createServer;

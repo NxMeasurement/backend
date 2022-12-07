@@ -1,7 +1,7 @@
 import routes from '../api/routes';
 import responseTime from 'response-time';
 import express, { Request, Response } from 'express';
-import { restResponseTimeHistogram, startMetricsServer } from './metrics';
+import { restResponseTimeHistogram } from './metrics';
 import deserializeUser from '../api/middleware/deserializeUser';
 
 const createServer = () => {
@@ -26,8 +26,6 @@ const createServer = () => {
       }
     })
   );
-
-  startMetricsServer();
 
   return app;
 };
