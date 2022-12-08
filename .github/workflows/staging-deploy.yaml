@@ -12,18 +12,17 @@ jobs:
       matrix:
         node-version: [14.x, 15.x, 16.x, 17.x, 18.x]
     steps:
-      - name: create env file
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: touch .env
-      - run: echo DB_CONNECTION=${{ secrets.DB_CONNECTION }} >> .env
-      - run: echo ACCESS_TOKEN_PRIVATE_KEY=${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }} >> .env
-      - run: echo ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }} >> .env
-      - run: echo REFRESH_PRIVATE_KEY=${{ secrets.REFRESH_PRIVATE_KEY }} >> .env
-      - run: echo REFRESH_PUBLIC_KEY=${{ secrets.REFRESH_PUBLIC_KEY }} >> .env
+        env:
+          DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+          ACCESS_TOKEN_PRIVATE_KEY: ${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }}
+          ACCESS_TOKEN_PUBLIC_KEY: ${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
+          REFRESH_PRIVATE_KEY: ${{ secrets.REFRESH_PRIVATE_KEY }}
+          REFRESH_PUBLIC_KEY: ${{ secrets.REFRESH_PUBLIC_KEY }}
       - run: npm install
       - run: npm run build --if-present
       - run: npm test
