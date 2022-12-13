@@ -13,7 +13,6 @@ export interface IClientInput {
   street?: string;
   zipCode?: string;
   city?: string;
-  notes?: string;
   expectedBodyWeight?: number;
   specificAims?: string[];
   pal: number;
