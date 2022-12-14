@@ -18,13 +18,9 @@ dotenv_1.default.config();
 const mongodb_memory_server_1 = require("mongodb-memory-server");
 const supertest_1 = __importDefault(require("supertest"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const jwt_utils_1 = require("../utils/jwt.utils");
 const server_1 = require("./server");
-const userInput = {
-    name: 'Jan',
-    lastName: 'Kowalski',
-    email: 'jan.kowalski@gmail.com',
-    password: 'Jan Kowalski2',
-};
+const sessionId = new mongoose_1.default.Types.ObjectId().toString();
 exports.userData = {
     name: 'Jan',
     lastName: 'Kowalski',
@@ -32,12 +28,16 @@ exports.userData = {
     createdAt: expect.any(String),
     updatedAt: expect.any(String),
 };
-const createUserPayload = {
-    user: Object.assign(Object.assign({}, exports.userData), { _id: expect.any(String), __v: expect.any(Number) }),
-    accessToken: expect.any(String),
-    refreshToken: expect.any(String),
+const clientInput = {
+    name: 'Jan',
+    lastName: 'Kowalski',
+    dateOfBirth: new Date(),
+    gender: 'male',
+    physiologicalState: 'lack',
+    pal: 1.4,
 };
-describe('user', () => {
+const clientPayload = Object.assign(Object.assign({}, clientInput), { specificAims: expect.any(Array), dateOfBirth: expect.any(String), createdAt: expect.any(String), updatedAt: expect.any(String), _id: expect.any(String), __v: expect.any(Number) });
+describe('user clients', () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         const mongoServer = yield mongodb_memory_server_1.MongoMemoryServer.create();
         yield mongoose_1.default.connect(mongoServer.getUri());
@@ -46,33 +46,33 @@ describe('user', () => {
         yield mongoose_1.default.disconnect();
         yield mongoose_1.default.connection.close();
     }));
-    describe('get user route', () => {
-        let accessToken;
-        let refreshToken;
-        describe('create user', () => {
+    describe('get client route', () => {
+        let clientId;
+        const accessToken = (0, jwt_utils_1.signJwt)(Object.assign(Object.assign({}, exports.userData), { sessionId }), 'accessTokenPrivateKey', { expiresIn: '15m' });
+        describe('create client', () => {
             it('should return a 200', () => __awaiter(void 0, void 0, void 0, function* () {
                 const { statusCode, body } = yield (0, supertest_1.default)(server_1.app)
-                    .post('/api/user')
-                    .send(userInput);
+                    .post('/api/clients')
+                    .set('Authorization', `Bearer ${accessToken}`)
+                    .send(clientInput);
+                expect(body).toEqual(clientPayload);
+                clientId = body._id;
                 expect(statusCode).toBe(200);
-                expect(body).toEqual(createUserPayload);
-                accessToken = body.accessToken;
-                refreshToken = body.refreshToken;
             }));
         });
         describe('given the user is not logged in', () => {
             it('should return a 403', () => __awaiter(void 0, void 0, void 0, function* () {
-                const { statusCode } = yield (0, supertest_1.default)(server_1.app).get('/api/user');
+                const { statusCode } = yield (0, supertest_1.default)(server_1.app).get('/api/clients');
                 expect(statusCode).toBe(403);
             }));
         });
-        describe('given the user is logged in', () => {
-            it('should return a 200 and the user', () => __awaiter(void 0, void 0, void 0, function* () {
+        describe('get user clients', () => {
+            it('should return a 200 and the user clients', () => __awaiter(void 0, void 0, void 0, function* () {
                 const { body, statusCode } = yield (0, supertest_1.default)(server_1.app)
-                    .get('/api/user')
+                    .get('/api/clients')
                     .set('Authorization', `Bearer ${accessToken}`);
                 expect(statusCode).toBe(200);
-                expect(body).toEqual(exports.userData);
+                expect(body).toEqual([clientPayload]);
             }));
         });
     });

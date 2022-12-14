@@ -3,11 +3,7 @@ dotenv.config();
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import supertest from 'supertest';
 import mongoose from 'mongoose';
-import { signJwt } from '../utils/jwt.utils';
 import { app } from './server';
-
-const userId = new mongoose.Types.ObjectId().toString();
-const sessionId = new mongoose.Types.ObjectId().toString();
 
 const userInput = {
   name: 'Jan',
@@ -16,7 +12,7 @@ const userInput = {
   password: 'Jan Kowalski2',
 };
 
-const userData = {
+export const userData = {
   name: 'Jan',
   lastName: 'Kowalski',
   email: 'jan.kowalski@gmail.com',
